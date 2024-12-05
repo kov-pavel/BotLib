@@ -17,18 +17,11 @@
     <packaging>jar</packaging>
     <description>Библиотека шаблонов для разработки Telegram ботов</description>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
     <properties>
         <!-- Project [START] -->
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.dependency.plugin.version>3.7.1</maven.dependency.plugin.version>
         <maven.surefire.plugin.version>3.3.1</maven.surefire.plugin.version>
