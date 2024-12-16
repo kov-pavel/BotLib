@@ -1,7 +1,5 @@
 package ru.ro.botlib.utils.admin;
 
-import ru.ro.botlib.utils.LogUtils;
-import ru.ro.botlib.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.BanChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,6 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.ro.botlib.utils.LogUtils;
+import ru.ro.botlib.utils.TimeUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -21,7 +21,7 @@ public class AdminUtils {
             List<AdminDeleteMessageDto> messages,
             AbsSender absSender
     ) {
-        messages.forEach(msg -> deleteMessage(msg.getChatID(), msg.getMessageID(), absSender));
+        messages.forEach(msg -> deleteMessage(msg.chatID(), msg.messageID(), absSender));
     }
 
     public static void deleteMessage(long chatId, int msgId, AbsSender absSender) {
