@@ -2,7 +2,7 @@ package ru.ro.botlib.chat.censorship;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ro.utils.Utils;
+import ru.ro.botlib.utils.TimeUtils;
 
 @Component
 public class TimeBasedMessageCensorshipPredicate extends CensorshipPredicate {
@@ -17,7 +17,7 @@ public class TimeBasedMessageCensorshipPredicate extends CensorshipPredicate {
         }
 
         var updateUnixTime = update.getMessage().getDate();
-        var updateDate = Utils.unix2date(updateUnixTime);
+        var updateDate = TimeUtils.unix2date(updateUnixTime);
         var updateHours = updateDate.getHours();
 
         return updateHours >= TO_TIME_MESSAGES_ALLOWED || updateHours < FROM_TIME_MESSAGES_ALLOWED;
