@@ -1,8 +1,7 @@
-package kov.pavel.botlib.utils.admin;
+package ru.ro.botlib.utils.admin;
 
-import kov.pavel.botlib.utils.GeneralUtils;
-import kov.pavel.botlib.utils.LogUtils;
-import kov.pavel.botlib.utils.TimeUtils;
+import ru.ro.botlib.utils.LogUtils;
+import ru.ro.botlib.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.BanChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

@@ -1,4 +1,4 @@
-package kov.pavel.botlib.utils;
+package ru.ro.botlib.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

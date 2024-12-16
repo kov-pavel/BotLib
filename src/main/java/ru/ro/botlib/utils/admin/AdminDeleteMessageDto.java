@@ -1,4 +1,4 @@
-package kov.pavel.botlib.utils.admin;
+package ru.ro.botlib.utils.admin;
 
 import lombok.Data;
 

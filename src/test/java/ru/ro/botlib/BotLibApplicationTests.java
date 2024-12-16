@@ -1,4 +1,4 @@
-package kov.pavel.botlib;
+package ru.ro.botlib;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package kov.pavel.botlib.utils;
+package ru.ro.botlib.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

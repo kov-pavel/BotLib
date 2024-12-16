@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>kov.pavel</groupId>
+    <groupId>ru.ro</groupId>
     <artifactId>bot-lib</artifactId>
     <version>0.1.0</version>
     <name>BotLib</name>

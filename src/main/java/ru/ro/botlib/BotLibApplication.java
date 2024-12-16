@@ -1,4 +1,4 @@
-package kov.pavel.botlib;
+package ru.ro.botlib;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

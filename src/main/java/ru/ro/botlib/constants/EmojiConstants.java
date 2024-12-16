@@ -1,4 +1,4 @@
-package kov.pavel.botlib.constants;
+package ru.ro.botlib.constants;
 
 public class EmojiConstants {
 
