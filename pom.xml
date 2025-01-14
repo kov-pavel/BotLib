@@ -37,6 +37,7 @@
         <jackson.version>2.17.2</jackson.version>
         <apache-commons-csv.version>1.10.0</apache-commons-csv.version>
         <telegram.version>6.9.7.1</telegram.version>
+        <spring-quartz.version>3.3.4</spring-quartz.version>
         <!-- Other [START] -->
     </properties>
 
@@ -113,6 +114,31 @@
             <version>${telegram.version}</version>
         </dependency>
         <!-- Core [END] -->
+
+        <!-- Quartz [START] -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <version>${spring-quartz.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+            <version>${spring-quartz.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+        <!-- Quartz [END] -->
 
         <!-- Test [START] -->
         <dependency>

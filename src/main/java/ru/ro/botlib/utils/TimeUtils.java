@@ -35,4 +35,19 @@ public class TimeUtils {
     public static Date unix2date(int unixTime) {
         return new Date(unixTime * 1000L);
     }
+
+    public static String formatOutputDate(Date date) {
+        var sb = new StringBuilder();
+
+        var dateStr = date.toString();
+        var dateParts = dateStr.split(" ");
+
+        var YY_MM_DD = dateParts[0].split("-");
+        var YY = YY_MM_DD[0];
+        var MM = YY_MM_DD[1];
+        var DD = YY_MM_DD[2];
+        sb.append(DD).append("/").append(MM).append("/").append(YY);
+
+        return sb.toString();
+    }
 }
