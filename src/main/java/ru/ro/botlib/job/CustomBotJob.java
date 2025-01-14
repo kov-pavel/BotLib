@@ -23,19 +23,11 @@ public abstract class CustomBotJob implements Job {
     protected String jobTriggerIdentityName;
 
     public CustomBotJob(Class<? extends CustomBotJob> clazz) {
-        init(clazz);
-    }
-
-    protected void init(Class<? extends CustomBotJob> clazz) {
         var className = clazz.getSimpleName();
         this.jobIdentityName = className;
         this.jobIdentityGroup = className;
         this.jobTriggerIdentityName = className + "Trigger";
 
-        setup();
-    }
-
-    private void setup() {
         try {
             setupInner();
         } catch (SchedulerException ex) {
