@@ -12,7 +12,7 @@ public class LogUtils {
     public static String parseObjectForLog(Object obj) {
         try {
             log.info("Преобразую объект к красивому виду...");
-            return Utils.OBJECT_WRITER.writeValueAsString(obj);
+            return SDKUtils.OBJECT_WRITER.writeValueAsString(obj);
         } catch (JsonProcessingException ex) {
             log.info("Операция по представлению объекта в красивом виде прервана. Причина: {}",
                     parseExceptionForLog(ex));
