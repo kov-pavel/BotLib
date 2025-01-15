@@ -30,7 +30,7 @@ public abstract class CustomBotCommand extends BotCommand {
                 if (Utils.IS_ADMIN_PREDICATE.test(user.getId())
                         && ChatUtils.isPrivateChat(chat)
                 ) {
-                    executeInner(user, chat, Arrays.stream(arguments).toList());
+                    executeInner(Utils.ABS_SENDER, user, chat, Arrays.stream(arguments).toList());
                 } else {
                     Utils.CHIEF_NOTIFIER.notifyChief(user, chat, arguments, this);
                 }
@@ -40,7 +40,7 @@ public abstract class CustomBotCommand extends BotCommand {
         });
     }
 
-    protected void executeInner(User user, Chat chat, List<String> arguments) throws Exception {
+    protected void executeInner(AbsSender absSender, User user, Chat chat, List<String> arguments) throws Exception {
         throw new NotImplementedException();
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.ro.botlib.utils.Utils;
 
@@ -22,7 +23,7 @@ public class PingBotCommand extends CustomBotCommand {
     }
 
     @Override
-    protected void executeInner(User user, Chat chat, List<String> arguments) throws Exception {
+    protected void executeInner(AbsSender absSender, User user, Chat chat, List<String> arguments) throws Exception {
         executeOne(user, chat, arguments);
     }
 
