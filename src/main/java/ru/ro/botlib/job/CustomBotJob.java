@@ -3,40 +3,54 @@ package ru.ro.botlib.job;
 import org.apache.commons.lang3.NotImplementedException;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import ru.ro.botlib.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.ro.botlib.utils.SDKUtils;
 
+@Component
 public abstract class CustomBotJob implements Job {
 
-    public static final Scheduler scheduler;
-    private static final SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    @Autowired
+    private Scheduler scheduler;
 
-    static {
-        try {
-            scheduler = schedulerFactory.getScheduler();
-        } catch (SchedulerException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     protected String jobIdentityName;
     protected String jobIdentityGroup;
     protected String jobTriggerIdentityName;
 
-    public CustomBotJob(Class<? extends CustomBotJob> clazz) {
-        var className = clazz.getSimpleName();
-        this.jobIdentityName = className;
-        this.jobIdentityGroup = className;
-        this.jobTriggerIdentityName = className + "Trigger";
-
+    public CustomBotJob(Class<? extends CustomBotJob> clazz, ScheduleBuilder<?> scheduleBuilder) {
         try {
-            setupInner();
-        } catch (SchedulerException ex) {
-            Utils.CHIEF_NOTIFIER.notifyChief(ex);
-        }
-    }
+            var className = clazz.getSimpleName();
+            this.jobIdentityName = className;
+            this.jobIdentityGroup = className;
+            this.jobTriggerIdentityName = className + "Trigger";
 
-    protected void setupInner() throws SchedulerException {
-        throw new NotImplementedException();
+            var jobKey = new JobKey(jobIdentityName, jobIdentityGroup);
+
+            if (scheduler.checkExists(jobKey)) {
+                scheduler.deleteJob(jobKey);
+            }
+
+            var job = JobBuilder.newJob(clazz)
+                    .withIdentity(jobKey)
+                    .build();
+
+            var triggerKey = new TriggerKey(jobTriggerIdentityName, jobIdentityGroup);
+
+            if (scheduler.checkExists(triggerKey)) {
+                scheduler.unscheduleJob(triggerKey);
+            }
+
+            var trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(triggerKey)
+                    .startNow()
+                    .withSchedule(scheduleBuilder)
+                    .build();
+
+            scheduler.scheduleJob(job, trigger);
+        } catch (SchedulerException ex) {
+            SDKUtils.CHIEF_NOTIFIER.notifyChief(ex);
+        }
     }
 
     @Override
@@ -44,7 +58,7 @@ public abstract class CustomBotJob implements Job {
         try {
             executeInner(jobExecutionContext);
         } catch (Exception ex) {
-            Utils.CHIEF_NOTIFIER.notifyChief(ex);
+            SDKUtils.CHIEF_NOTIFIER.notifyChief(ex);
         }
     }
 

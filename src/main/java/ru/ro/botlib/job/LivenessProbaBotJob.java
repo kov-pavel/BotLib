@@ -2,18 +2,18 @@ package ru.ro.botlib.job;
 
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.ro.botlib.command.PingBotCommand;
 import ru.ro.botlib.utils.LogUtils;
-import ru.ro.botlib.utils.Utils;
+import ru.ro.botlib.utils.SDKUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-@Component
 @Slf4j
 public class LivenessProbaBotJob extends CustomBotJob {
 
@@ -23,28 +23,11 @@ public class LivenessProbaBotJob extends CustomBotJob {
     private final Chat chat = new Chat();
     private final List<String> args = Collections.emptyList();
 
-    private final List<Long> adminids;
+    private final List<Long> adminIds;
 
-    public LivenessProbaBotJob(List<Long> adminids) {
-        super(LivenessProbaBotJob.class);
-        this.adminids = adminids;
-    }
-
-    @Override
-    protected void setupInner() throws SchedulerException {
-        var job = JobBuilder.newJob(LivenessProbaBotJob.class)
-                .withIdentity(jobIdentityName, jobIdentityGroup)
-                .build();
-
-        var trigger = TriggerBuilder.newTrigger()
-                .withIdentity(jobTriggerIdentityName, jobIdentityGroup)
-                .startNow()
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInHours(1)
-                        .repeatForever()
-                ).build();
-
-        scheduler.scheduleJob(job, trigger);
+    public LivenessProbaBotJob(List<Long> adminIds, ScheduleBuilder<?> scheduleBuilder) {
+        super(LivenessProbaBotJob.class, scheduleBuilder);
+        this.adminIds = adminIds;
     }
 
     @Override
@@ -52,14 +35,14 @@ public class LivenessProbaBotJob extends CustomBotJob {
         LogUtils.logBlockSeparator(true);
         log.info("*LivenessProbaJob* [START]");
 
-        adminids.forEach(adminId -> {
+        adminIds.forEach(adminId -> {
             try {
                 log.info("\nПинг adminID = {}...", adminId);
                 chat.setId(adminId);
                 pingBotCommand.executeOne(user, chat, args);
                 log.info("Пинг adminID = {} завершен.", adminId);
             } catch (TelegramApiException ex) {
-                Utils.CHIEF_NOTIFIER.notifyChief(ex);
+                SDKUtils.CHIEF_NOTIFIER.notifyChief(ex);
             }
         });
 

@@ -7,7 +7,7 @@ import ru.ro.botlib.chat.CustomChat;
 
 import java.util.function.Predicate;
 
-public class Utils {
+public class SDKUtils {
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     public static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writerWithDefaultPrettyPrinter();

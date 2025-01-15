@@ -105,7 +105,7 @@ public class ChiefNotifier {
             log.info("Сообщение сформировано.");
 
             log.info("Отправка сообщения шефу...");
-            Utils.ABS_SENDER.execute(sendMsg);
+            SDKUtils.ABS_SENDER.execute(sendMsg);
             log.info("Сообщение отправлено шефу.");
         } catch (TelegramApiException ex) {
             log.error("Получено исключение при отправке сообщения шефу!", ex);
@@ -114,10 +114,10 @@ public class ChiefNotifier {
     }
 
     public String parseUserForLog(User user) throws JsonProcessingException {
-        return Utils.OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(user);
+        return SDKUtils.OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(user);
     }
 
     public String parseChatForLog(Chat chat) throws JsonProcessingException {
-        return Utils.OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(chat);
+        return SDKUtils.OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(chat);
     }
 }
