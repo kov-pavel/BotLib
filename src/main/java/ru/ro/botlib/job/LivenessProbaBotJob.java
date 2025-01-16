@@ -15,9 +15,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Slf4j
+@Component
 public class LivenessProbaBotJob extends CustomBotJob {
 
-    private final PingBotCommand pingBotCommand = new PingBotCommand();
+    private final PingBotCommand pingBotCommand;
 
     private final User user = new User();
     private final Chat chat = new Chat();
@@ -25,9 +26,16 @@ public class LivenessProbaBotJob extends CustomBotJob {
 
     private final List<Long> adminIds;
 
-    public LivenessProbaBotJob(List<Long> adminIds, ScheduleBuilder<?> scheduleBuilder) {
-        super(LivenessProbaBotJob.class, scheduleBuilder);
+    @Autowired
+    public LivenessProbaBotJob(
+            List<Long> adminIds,
+            ScheduleBuilder<?> scheduleBuilder,
+            PingBotCommand pingBotCommand,
+            Scheduler scheduler
+    ) {
+        super(LivenessProbaBotJob.class, scheduleBuilder, scheduler);
         this.adminIds = adminIds;
+        this.pingBotCommand = pingBotCommand;
     }
 
     @Override
@@ -37,12 +45,12 @@ public class LivenessProbaBotJob extends CustomBotJob {
 
         adminIds.forEach(adminId -> {
             try {
-                log.info("\nПинг adminID = {}...", adminId);
+                log.info("\nПинг adminID = {}, START", adminId);
                 chat.setId(adminId);
                 pingBotCommand.executeOne(user, chat, args);
-                log.info("Пинг adminID = {} завершен.", adminId);
+                log.info("Пинг adminID = {}, END", adminId);
             } catch (TelegramApiException ex) {
-                SDKUtils.CHIEF_NOTIFIER.notifyChief(ex);
+                SDKUtils.CHIEF_NOTIFIER.notifyChief(ex, "Не получается пингануть adminID = " + adminId);
             }
         });
 

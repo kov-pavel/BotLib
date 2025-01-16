@@ -2,7 +2,6 @@ package ru.ro.botlib.job;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.ro.botlib.utils.SDKUtils;
@@ -10,15 +9,15 @@ import ru.ro.botlib.utils.SDKUtils;
 @Component
 public abstract class CustomBotJob implements Job {
 
-    @Autowired
-    private Scheduler scheduler;
-
-
     protected String jobIdentityName;
     protected String jobIdentityGroup;
     protected String jobTriggerIdentityName;
 
-    public CustomBotJob(Class<? extends CustomBotJob> clazz, ScheduleBuilder<?> scheduleBuilder) {
+    public CustomBotJob(
+            Class<? extends CustomBotJob> clazz,
+            ScheduleBuilder<?> scheduleBuilder,
+            Scheduler scheduler
+    ) {
         try {
             var className = clazz.getSimpleName();
             this.jobIdentityName = className;

@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import ru.ro.botlib.utils.ChatUtils;
+import ru.ro.botlib.utils.LogUtils;
 import ru.ro.botlib.utils.SDKUtils;
 
 import java.util.Arrays;
@@ -21,12 +22,16 @@ public abstract class CustomBotCommand extends BotCommand {
 
     public CustomBotCommand(String commandIdentifier, String description) {
         super(commandIdentifier, description);
+        log.info("HELLO, WORLD!");
     }
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         executor.execute(() -> {
             try {
+                LogUtils.logBlockSeparator(true);
+                log.info("Вызов команды /{}, START", getCommandIdentifier());
+
                 if (SDKUtils.IS_ADMIN_PREDICATE.test(user.getId())
                         && ChatUtils.isPrivateChat(chat)
                 ) {
@@ -36,6 +41,9 @@ public abstract class CustomBotCommand extends BotCommand {
                 }
             } catch (Exception ex) {
                 SDKUtils.CHIEF_NOTIFIER.notifyChief(user, chat, arguments, this);
+            } finally {
+                log.info("Вызов команды /{}, END", getCommandIdentifier());
+                LogUtils.logBlockSeparator(false);
             }
         });
     }

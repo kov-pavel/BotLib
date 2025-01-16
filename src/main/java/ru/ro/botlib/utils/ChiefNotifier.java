@@ -75,6 +75,12 @@ public class ChiefNotifier {
         );
     }
 
+    public void notifyChief(Exception ex, String additionalText) {
+        notifyChief(
+                additionalText + "\n\n" + LogUtils.parseExceptionForLog(ex)
+        );
+    }
+
     public void notifyChief(Exception ex, Update update) {
         notifyChief(
                 LogUtils.parseExceptionForLog(ex),
