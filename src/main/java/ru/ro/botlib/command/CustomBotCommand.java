@@ -6,8 +6,9 @@ import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+import ru.ro.botlib.exception.BotException;
 import ru.ro.botlib.utils.ChatUtils;
-import ru.ro.botlib.utils.LogUtils;
+import ru.ro.botlib.utils.log.LogUtils;
 import ru.ro.botlib.utils.SDKUtils;
 
 import java.util.Arrays;
@@ -27,12 +28,13 @@ public abstract class CustomBotCommand extends BotCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         executor.execute(() -> {
+            var operationName = String.format("Вызов команды - /%s - с аргументами - %s",
+                    getCommandIdentifier(),
+                    LogUtils.parseObjectForLog(arguments)
+            );
+
             try {
-                LogUtils.logBlockSeparator(true);
-                log.info("Вызов команды '/{}' с аргументами '{}', START",
-                        getCommandIdentifier(),
-                        LogUtils.parseObjectForLog(arguments)
-                );
+                LogUtils.logBlockSeparator(true, operationName);
 
                 log.info("Проверка на админа...");
                 if (SDKUtils.IS_ADMIN_PREDICATE.test(user.getId())
@@ -45,20 +47,9 @@ public abstract class CustomBotCommand extends BotCommand {
                     SDKUtils.CHIEF_NOTIFIER.notifyChief(user, chat, arguments, this);
                 }
             } catch (Exception ex) {
-                log.info("Возникла ошибка при вызове команды '/{}' с аргументами '{}'.",
-                        getCommandIdentifier(),
-                        LogUtils.parseObjectForLog(arguments),
-                        ex
-                );
-
-                log.info("\nУведомляю об этом Шефа и прекращаю обработку...");
-                SDKUtils.CHIEF_NOTIFIER.notifyChief(user, chat, arguments, this);
+                BotException.describeLogAndChiefAndClient(operationName, ex, chat.getId(), absSender);
             } finally {
-                log.info("Вызов команды '/{}' с аргументами '{}', END",
-                        getCommandIdentifier(),
-                        LogUtils.parseObjectForLog(arguments)
-                );
-                LogUtils.logBlockSeparator(false);
+                LogUtils.logBlockSeparator(false, operationName);
             }
         });
     }

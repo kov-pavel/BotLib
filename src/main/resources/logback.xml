@@ -1,29 +1,29 @@
-<configuration>
+<!--<configuration>-->
 
-    <!-- Rolling File Appender -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/robot.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- Паттерн имени файла с датой -->
-            <fileNamePattern>robot.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- Максимальное количество архивов -->
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%date %level %logger{10} - %msg%n</pattern>
-        </encoder>
-    </appender>
+<!--    &lt;!&ndash; Rolling File Appender &ndash;&gt;-->
+<!--    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>logs/robot.log</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; Паттерн имени файла с датой &ndash;&gt;-->
+<!--            <fileNamePattern>robot.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+<!--            &lt;!&ndash; Максимальное количество архивов &ndash;&gt;-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>%date %level %logger{10} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
-    <!-- Console Appender -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%kvp %msg%n</pattern>
-        </encoder>
-    </appender>
+<!--    &lt;!&ndash; Console Appender &ndash;&gt;-->
+<!--    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            <pattern>%kvp %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
-    <!-- Root Logger -->
-    <root level="info">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/>
-    </root>
-</configuration>
+<!--    &lt;!&ndash; Root Logger &ndash;&gt;-->
+<!--    <root level="info">-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--    </root>-->
+<!--</configuration>-->

@@ -1,9 +1,13 @@
 package ru.ro.botlib.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.ro.botlib.exception.BotException;
+import ru.ro.botlib.utils.log.LogUtils;
 
 import java.util.List;
 
@@ -39,6 +43,33 @@ public class ChatUtils {
             throw new BotException(errorMsg, ex);
         } finally {
             log.info("Проверка чата на утилитность, END");
+        }
+    }
+
+    public static void sendMessage(long chatId, String text, AbsSender absSender) {
+        var sendMsg = SendMessage.builder()
+                .text(text)
+                .chatId(chatId)
+                .build();
+        sendMessage(sendMsg, absSender);
+    }
+
+    public static void sendMessage(long chatId, int threadId, String text, AbsSender absSender) {
+        var sendMsg = SendMessage.builder()
+                .text(text)
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .build();
+        sendMessage(sendMsg, absSender);
+    }
+
+    public static void sendMessage(SendMessage sendMessage, AbsSender absSender) {
+        var operationName = String.format("Отправка сообщения %s", LogUtils.parseObjectForLog(sendMessage));
+
+        try {
+            absSender.execute(sendMessage);
+        } catch (TelegramApiException ex) {
+            throw new BotException(operationName, ex);
         }
     }
 }

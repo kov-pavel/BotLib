@@ -4,8 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.quartz.*;
 import org.springframework.stereotype.Component;
-import ru.ro.botlib.utils.LogUtils;
-import ru.ro.botlib.utils.SDKUtils;
+import ru.ro.botlib.exception.BotException;
+import ru.ro.botlib.utils.log.LogUtils;
+import ru.ro.botlib.utils.TimeUtils;
 
 @Component
 @Slf4j
@@ -21,16 +22,18 @@ public abstract class CustomBotJob implements Job {
             Scheduler scheduler
     ) {
         var className = clazz.getSimpleName();
-        log.info("Инициализация джобы {}, START", className);
+        var operationName = "Инициализация джобы " + className;
 
         try {
+            LogUtils.logBlockSeparator(true, operationName);
+
             this.jobIdentityName = className;
             this.jobIdentityGroup = className;
             this.jobTriggerIdentityName = className + "Trigger";
 
             var jobKey = new JobKey(jobIdentityName, jobIdentityGroup);
 
-            log.info("Проверка существования джобы {}, START", LogUtils.parseObjectForLog(jobKey));
+            log.info("Проверка существования джобы...");
             if (scheduler.checkExists(jobKey)) {
                 log.info("Джоба существует. Удаляю ее...");
                 scheduler.deleteJob(jobKey);
@@ -45,7 +48,7 @@ public abstract class CustomBotJob implements Job {
 
             var triggerKey = new TriggerKey(jobTriggerIdentityName, jobIdentityGroup);
 
-            log.info("Проверка существования триггера {}, START", LogUtils.parseObjectForLog(triggerKey));
+            log.info("Проверка существования триггера...");
             if (scheduler.checkExists(triggerKey)) {
                 log.info("Триггер существует. Удаляю его...");
                 scheduler.unscheduleJob(triggerKey);
@@ -56,25 +59,32 @@ public abstract class CustomBotJob implements Job {
 
             var trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerKey)
-                    .startNow()
                     .withSchedule(scheduleBuilder)
+                    .startAt(TimeUtils.nowPlusSeconds(15))
                     .build();
 
+            log.info("Триггер успешно зарегистрирован: {}", LogUtils.parseObjectForLog(trigger));
+
             scheduler.scheduleJob(job, trigger);
-        } catch (SchedulerException ex) {
-            log.info("Ошибка при инициализации джобы!", ex);
-            SDKUtils.CHIEF_NOTIFIER.notifyChief(ex);
+            log.info("Джоба успешно запланирована: {}", LogUtils.parseObjectForLog(job));
+        } catch (Exception ex) {
+            var describeResponse = BotException.describeLog(operationName, ex);
         } finally {
-            log.info("Инициализация джобы {}, END", className);
+            LogUtils.logBlockSeparator(false, operationName);
         }
     }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
+        var operationName = jobIdentityName;
         try {
+            LogUtils.logBlockSeparator(true, operationName);
+
             executeInner(jobExecutionContext);
         } catch (Exception ex) {
-            SDKUtils.CHIEF_NOTIFIER.notifyChief(ex);
+            BotException.describeLogAndChief(operationName, ex);
+        } finally {
+            LogUtils.logBlockSeparator(false, operationName);
         }
     }
 

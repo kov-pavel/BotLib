@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import ru.ro.botlib.chat.CustomChat;
-import ru.ro.botlib.exception.BotException;
+import ru.ro.botlib.utils.log.LogUtils;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -65,19 +64,19 @@ public class ChiefNotifier {
 
     public void notifyChief(Exception ex) {
         notifyChief(
-                LogUtils.parseObjectForLog(ex)
+                LogUtils.parseExceptionForLog(ex)
         );
     }
 
     public void notifyChief(Exception ex, String additionalText) {
         notifyChief(
-                additionalText + "\n\n" + LogUtils.parseObjectForLog(ex)
+                additionalText + "\n\n" + LogUtils.parseExceptionForLog(ex)
         );
     }
 
     public void notifyChief(Exception ex, Update update) {
         notifyChief(
-                LogUtils.parseObjectForLog(ex),
+                LogUtils.parseExceptionForLog(ex),
                 update
         );
     }
@@ -87,7 +86,7 @@ public class ChiefNotifier {
 
         textSb
                 .append("При обработке обновления:\n").append(LogUtils.parseObjectForLog(update))
-                .append("\n\nВозникла ошибка: ").append(errorText);
+                .append("\n\nВозникла ошибка:\n").append(errorText);
 
         notifyChief(
                 textSb.toString()
@@ -95,21 +94,6 @@ public class ChiefNotifier {
     }
 
     public void notifyChief(String text) {
-        try {
-            log.info("Формирование нотификации Шефу, START");
-
-            var sendMsg = SendMessage.builder()
-                    .chatId(chat.getChatId())
-                    .messageThreadId(chat.getThreadId())
-                    .text(text)
-                    .build();
-
-            SDKUtils.ABS_SENDER.execute(sendMsg);
-        } catch (Exception ex) {
-            var errorMsg = "Получено исключение при отправке нотификации Шефу!";
-            throw new BotException(errorMsg, ex);
-        } finally {
-            log.info("Формирование нотификации Шефу, END");
-        }
+        ChatUtils.sendMessage(chat.getChatId(), chat.getThreadId(), text, SDKUtils.ABS_SENDER);
     }
 }

@@ -13,6 +13,14 @@ public class TimeUtils {
         return new Date(System.currentTimeMillis());
     }
 
+    public static Date nowPlusSeconds(int nSeconds) {
+        var now = now();
+        var calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.SECOND, nSeconds);
+        return calendar.getTime();
+    }
+
     public static Date nowPlusDays(int nDays) {
         var now = now();
         var calendar = Calendar.getInstance();
