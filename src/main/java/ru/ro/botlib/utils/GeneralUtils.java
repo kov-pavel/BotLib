@@ -4,9 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import ru.ro.botlib.exception.BotException;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
 public class GeneralUtils {
@@ -39,15 +40,23 @@ public class GeneralUtils {
     }
 
     public static String extractMemberUserName(Update update) {
-        if (update.hasMessage()) {
-            return update.getMessage().getFrom().getUserName();
-        } else if (update.hasChatMember()) {
-            return update.getChatMember().getNewChatMember().getUser().getUserName();
-        } else if (update.hasMyChatMember()) {
-            return update.getMyChatMember().getNewChatMember().getUser().getUserName();
-        } else {
-            log.error("Не могу получить UserName из обновления. Возвращаю пустую строку.");
-            return "";
+        var operationName = "Доставание Username из Update";
+        log.info("{}, START", operationName);
+        try {
+            if (update.hasMessage()) {
+                log.info("Username получен из Message.");
+                return update.getMessage().getFrom().getUserName();
+            } else if (update.hasChatMember()) {
+                log.info("Username получен из ChatMember.");
+                return update.getChatMember().getNewChatMember().getUser().getUserName();
+            } else if (update.hasMyChatMember()) {
+                log.info("Username получен из MyChatMember.");
+                return update.getMyChatMember().getNewChatMember().getUser().getUserName();
+            } else {
+                throw new BotException(operationName);
+            }
+        } finally {
+            log.info("{}, END", operationName);
         }
     }
 }

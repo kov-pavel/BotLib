@@ -22,7 +22,6 @@ public abstract class CustomBotCommand extends BotCommand {
 
     public CustomBotCommand(String commandIdentifier, String description) {
         super(commandIdentifier, description);
-        log.info("HELLO, WORLD!");
     }
 
     @Override
@@ -30,19 +29,35 @@ public abstract class CustomBotCommand extends BotCommand {
         executor.execute(() -> {
             try {
                 LogUtils.logBlockSeparator(true);
-                log.info("Вызов команды /{}, START", getCommandIdentifier());
+                log.info("Вызов команды '/{}' с аргументами '{}', START",
+                        getCommandIdentifier(),
+                        LogUtils.parseObjectForLog(arguments)
+                );
 
+                log.info("Проверка на админа...");
                 if (SDKUtils.IS_ADMIN_PREDICATE.test(user.getId())
                         && ChatUtils.isPrivateChat(chat)
                 ) {
+                    log.info("Команда отправлена Админом. Продолжаю обработку...");
                     executeInner(SDKUtils.ABS_SENDER, user, chat, Arrays.stream(arguments).toList());
                 } else {
+                    log.info("Команда отправлена НЕ Админом. Уведомляю об этом Шефа и прекращаю обработку...");
                     SDKUtils.CHIEF_NOTIFIER.notifyChief(user, chat, arguments, this);
                 }
             } catch (Exception ex) {
+                log.info("Возникла ошибка при вызове команды '/{}' с аргументами '{}'.",
+                        getCommandIdentifier(),
+                        LogUtils.parseObjectForLog(arguments),
+                        ex
+                );
+
+                log.info("\nУведомляю об этом Шефа и прекращаю обработку...");
                 SDKUtils.CHIEF_NOTIFIER.notifyChief(user, chat, arguments, this);
             } finally {
-                log.info("Вызов команды /{}, END", getCommandIdentifier());
+                log.info("Вызов команды '/{}' с аргументами '{}', END",
+                        getCommandIdentifier(),
+                        LogUtils.parseObjectForLog(arguments)
+                );
                 LogUtils.logBlockSeparator(false);
             }
         });

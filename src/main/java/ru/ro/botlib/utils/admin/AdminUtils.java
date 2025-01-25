@@ -26,19 +26,18 @@ public class AdminUtils {
 
     public static void deleteMessage(long chatId, int msgId, AbsSender absSender) {
         try {
-            log.info("Удаление сообщения из чата...");
+            log.info("Удаление сообщения (msgID = {}) из чата (chatID = {}), START", msgId, chatId);
 
             var deleteMessage = DeleteMessage.builder()
                     .chatId(chatId)
                     .messageId(msgId)
                     .build();
             absSender.execute(deleteMessage);
-
-            log.info("Сообщение из чата удалено.");
         } catch (TelegramApiException ex) {
             var errorMsg = String.format("Ошибка при удалении сообщения (messageID = %s) из чата (chatID = %s)!", msgId, chatId);
-            log.info(errorMsg, ex);
             throw new RuntimeException(errorMsg, ex);
+        } finally {
+            log.info("Удаление сообщения из чата, END");
         }
     }
 
@@ -51,11 +50,13 @@ public class AdminUtils {
             List<AdminDeleteMessageDto> messages
     ) {
         try {
-            log.info("Выполнение операции админа перед баном...");
-            adminPreOperation.execute();
-            log.info("Операция выполнена.\n");
+            log.info("\nПроцедура бана участника, START");
 
-            log.info("Формирования бана в Telegram API...");
+            log.info("Выполнение операции админа перед баном, START");
+            adminPreOperation.execute();
+            log.info("Выполнение операции админа перед баном, END");
+
+            log.info("Формирование и отправка бана в Telegram API, START");
             var bannedUntilUnix = TimeUtils.date2unix(untilDate);
             var banChatMember = BanChatMember.builder()
                     .chatId(chatId)
@@ -63,15 +64,17 @@ public class AdminUtils {
                     .untilDate(bannedUntilUnix)
                     .build();
             absSender.execute(banChatMember);
-            log.info("Бан отправлен в Telegram API.\n");
+            log.info("Формирование и отправка бана в Telegram API, END");
 
-            log.info("Удаление всех сообщений пользователя...");
+            log.info("Удаление всех сообщений пользователя, START");
             deleteAllMessages(messages, absSender);
-            log.info("Все сообщения пользователя удалены.\n");
+            log.info("Удаление всех сообщений пользователя, END");
         } catch (Exception ex) {
             var errorMsg = String.format("Возникла ошибка при бане участника c tgId = `%s` в чате `%s`!\n", userId, chatId);
             log.info(errorMsg, ex);
             throw new RuntimeException(errorMsg, ex);
+        } finally {
+            log.info("Процедура бана участника, END");
         }
     }
 
@@ -90,24 +93,24 @@ public class AdminUtils {
 
     public static Message sendMessage(Message msg, AbsSender absSender) {
         try {
-            log.info("Формирование сообщения для отправки...");
+            log.info("Формирование сообщения для отправки, START");
             var sendMsg = SendMessage.builder()
                     .chatId(msg.getChatId())
                     .messageThreadId(msg.getMessageThreadId())
                     .text(msg.getText())
                     .parseMode("Markdown")
                     .build();
-            log.info("Сообщение для отправки сформировано.");
+            log.info("Формирование сообщения для отправки, END");
 
-            log.info("Отправка сообщения...");
-            var sentMsg = absSender.execute(sendMsg);
-            log.info("Сообщение отправлено.\n");
+            log.info("Отправка сообщения, START");
 
-            return sentMsg;
+            return absSender.execute(sendMsg);
         } catch (Exception ex) {
             var errorMsg = String.format("Возникла ошибка при отправке сообщения: %s\n", LogUtils.parseObjectForLog(msg));
             log.error(errorMsg, ex);
             throw new RuntimeException(errorMsg, ex);
+        } finally {
+            log.info("Отправка сообщения, END");
         }
     }
 }

@@ -2,28 +2,21 @@ package ru.ro.botlib.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Arrays;
+import ru.ro.botlib.exception.BotException;
 
 @Slf4j
 public class LogUtils {
 
-
     public static String parseObjectForLog(Object obj) {
+        var operationName = "Преобразование объекта к красивому виду";
         try {
-            log.info("Преобразую объект к красивому виду...");
+            log.info("{}, START", operationName);
             return SDKUtils.OBJECT_WRITER.writeValueAsString(obj);
         } catch (JsonProcessingException ex) {
-            log.info("Операция по представлению объекта в красивом виде прервана. Причина: {}",
-                    parseExceptionForLog(ex));
-            throw new RuntimeException(ex);
+            throw new BotException(operationName, ex);
         } finally {
-            log.info("Объект преобразован успешно.");
+            log.info("{}, END", operationName);
         }
-    }
-
-    public static String parseExceptionForLog(Exception ex) {
-        return ex.getLocalizedMessage() + "\n" + Arrays.toString(ex.getStackTrace());
     }
 
     public static void logBlockSeparator(boolean isFirstLine) {
