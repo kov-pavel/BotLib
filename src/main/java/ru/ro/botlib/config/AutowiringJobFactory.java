@@ -1,26 +1,37 @@
 package ru.ro.botlib.config;
 
-import org.quartz.Job;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AutowiringJobFactory implements JobFactory {
+public class AutowiringJobFactory extends SpringBeanJobFactory {
 
-    private final ApplicationContext applicationContext;
+//    private final ApplicationContext applicationContext;
+//
+//    @Autowired
+//    public AutowiringJobFactory(ApplicationContext applicationContext) {
+//        this.applicationContext = applicationContext;
+//    }
+//
+//    @Override
+//    public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler) throws SchedulerException {
+//        return applicationContext.getBean(bundle.getJobDetail().getJobClass());
+//    }
 
-    @Autowired
-    public AutowiringJobFactory(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    private AutowireCapableBeanFactory beanFactory;
+
+    @Override
+    public void setApplicationContext(ApplicationContext context) {
+        beanFactory = context.getAutowireCapableBeanFactory();
     }
 
     @Override
-    public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler) throws SchedulerException {
-        return applicationContext.getBean(bundle.getJobDetail().getJobClass());
+    protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
+        Object job = super.createJobInstance(bundle);
+        beanFactory.autowireBean(job);
+        return job;
     }
 }

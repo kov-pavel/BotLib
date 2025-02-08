@@ -1,22 +1,29 @@
 package ru.ro.botlib.job;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
-import org.quartz.*;
-import org.springframework.stereotype.Component;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.ScheduleBuilder;
+import org.quartz.Scheduler;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import ru.ro.botlib.exception.BotException;
-import ru.ro.botlib.utils.log.LogUtils;
 import ru.ro.botlib.utils.TimeUtils;
+import ru.ro.botlib.utils.log.LogUtils;
 
-@Component
 @Slf4j
+@NoArgsConstructor
 public abstract class CustomBotJob implements Job {
 
     protected String jobIdentityName;
     protected String jobIdentityGroup;
     protected String jobTriggerIdentityName;
 
-    public CustomBotJob(
+    protected void init(
             Class<? extends CustomBotJob> clazz,
             ScheduleBuilder<?> scheduleBuilder,
             Scheduler scheduler
@@ -60,13 +67,13 @@ public abstract class CustomBotJob implements Job {
             var trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerKey)
                     .withSchedule(scheduleBuilder)
-                    .startAt(TimeUtils.nowPlusSeconds(15))
+                    .startAt(TimeUtils.now())
                     .build();
 
-            log.info("Триггер успешно зарегистрирован: {}", LogUtils.parseObjectForLog(trigger));
+            log.info("Триггер успешно зарегистрирован.");
 
             scheduler.scheduleJob(job, trigger);
-            log.info("Джоба успешно запланирована: {}", LogUtils.parseObjectForLog(job));
+            log.info("Джоба успешно запланирована.");
         } catch (Exception ex) {
             var describeResponse = BotException.describeLog(operationName, ex);
         } finally {

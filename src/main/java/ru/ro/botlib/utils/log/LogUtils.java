@@ -17,8 +17,10 @@ public class LogUtils {
         try {
             return SDKUtils.OBJECT_WRITER.writeValueAsString(obj);
         } catch (JsonProcessingException ex) {
-            throw new BotException(operationName, ex);
+            BotException.describeLog(operationName, ex);
         }
+
+        return "";
     }
 
     public static String parseExceptionForLog(Throwable ex) {
