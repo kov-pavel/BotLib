@@ -21,6 +21,25 @@ public class TimeUtils {
         return calendar.getTime();
     }
 
+    public static Date atHours(int hours) {
+        // Получаем текущий момент времени
+        var calendar = Calendar.getInstance();
+        var now = calendar.getTime();
+
+        // Устанавливаем указанный час и обнуляем минуты, секунды, миллисекунды
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Если полученное время уже прошло, добавляем 1 день
+        if (calendar.getTime().before(now)) {
+            calendar.add(Calendar.DATE, 1);
+        }
+
+        return calendar.getTime();
+    }
+
     public static Date nowPlusDays(int nDays) {
         var now = now();
         var calendar = Calendar.getInstance();

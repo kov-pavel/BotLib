@@ -24,7 +24,7 @@ public class LogUtils {
     }
 
     public static String parseExceptionForLog(Throwable ex) {
-        var operationName = "Преобразование объекта к красивому виду";
+        var operationName = "Преобразование исключения к красивому виду";
         try {
             var sw = new StringWriter();
             var pw = new PrintWriter(sw);
@@ -50,7 +50,7 @@ public class LogUtils {
 
             return sw.toString();
         } catch (Exception ex2) {
-            throw new BotException(operationName, ex2);
+            return "Не удалось выполнить операцию: " + operationName;
         }
     }
 

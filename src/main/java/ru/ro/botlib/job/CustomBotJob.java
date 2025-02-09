@@ -1,5 +1,6 @@
 package ru.ro.botlib.job;
 
+import jakarta.annotation.PostConstruct;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
@@ -11,22 +12,43 @@ import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.stereotype.Component;
 import ru.ro.botlib.exception.BotException;
 import ru.ro.botlib.utils.TimeUtils;
 import ru.ro.botlib.utils.log.LogUtils;
 
+import java.util.Date;
+
 @Slf4j
 @NoArgsConstructor
+@Component
 public abstract class CustomBotJob implements Job {
 
-    protected String jobIdentityName;
-    protected String jobIdentityGroup;
-    protected String jobTriggerIdentityName;
+    @Autowired
+    @Qualifier("botSchedulerFactoryBean")
+    private SchedulerFactoryBean botSchedulerFactoryBean;
+
+    private Scheduler scheduler;
+
+    @PostConstruct
+    private void postConstruct() {
+        scheduler = botSchedulerFactoryBean.getScheduler();
+    }
+
+    protected void init(
+            Class<? extends CustomBotJob> clazz,
+            ScheduleBuilder<?> scheduleBuilder
+    ) {
+        init(clazz, scheduleBuilder, TimeUtils.nowPlusSeconds(5));
+    }
 
     protected void init(
             Class<? extends CustomBotJob> clazz,
             ScheduleBuilder<?> scheduleBuilder,
-            Scheduler scheduler
+            Date startTime
     ) {
         var className = clazz.getSimpleName();
         var operationName = "Инициализация джобы " + className;
@@ -34,16 +56,16 @@ public abstract class CustomBotJob implements Job {
         try {
             LogUtils.logBlockSeparator(true, operationName);
 
-            this.jobIdentityName = className;
-            this.jobIdentityGroup = className;
-            this.jobTriggerIdentityName = className + "Trigger";
+            var jobIdentityName = className;
+            var jobIdentityGroup = className;
+            var jobTriggerIdentityName = className + "Trigger";
 
             var jobKey = new JobKey(jobIdentityName, jobIdentityGroup);
 
             log.info("Проверка существования джобы...");
-            if (scheduler.checkExists(jobKey)) {
+            if (this.scheduler.checkExists(jobKey)) {
                 log.info("Джоба существует. Удаляю ее...");
-                scheduler.deleteJob(jobKey);
+                this.scheduler.deleteJob(jobKey);
                 log.info("Джоба удалена.");
             } else {
                 log.info("Джоба появляется впервые.");
@@ -56,9 +78,9 @@ public abstract class CustomBotJob implements Job {
             var triggerKey = new TriggerKey(jobTriggerIdentityName, jobIdentityGroup);
 
             log.info("Проверка существования триггера...");
-            if (scheduler.checkExists(triggerKey)) {
+            if (this.scheduler.checkExists(triggerKey)) {
                 log.info("Триггер существует. Удаляю его...");
-                scheduler.unscheduleJob(triggerKey);
+                this.scheduler.unscheduleJob(triggerKey);
                 log.info("Триггер удален.");
             } else {
                 log.info("Триггер появляется впервые.");
@@ -67,12 +89,12 @@ public abstract class CustomBotJob implements Job {
             var trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerKey)
                     .withSchedule(scheduleBuilder)
-                    .startAt(TimeUtils.now())
+                    .startAt(startTime)
                     .build();
 
             log.info("Триггер успешно зарегистрирован.");
 
-            scheduler.scheduleJob(job, trigger);
+            this.scheduler.scheduleJob(job, trigger);
             log.info("Джоба успешно запланирована.");
         } catch (Exception ex) {
             var describeResponse = BotException.describeLog(operationName, ex);
@@ -83,7 +105,7 @@ public abstract class CustomBotJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        var operationName = jobIdentityName;
+        var operationName = jobExecutionContext.getJobDetail().getKey().getName();
         try {
             LogUtils.logBlockSeparator(true, operationName);
 

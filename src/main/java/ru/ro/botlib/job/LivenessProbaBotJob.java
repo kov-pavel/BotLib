@@ -6,7 +6,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.ScheduleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -33,31 +32,27 @@ public class LivenessProbaBotJob extends CustomBotJob {
     @Qualifier("botScheduleBuilder")
     private ScheduleBuilder<?> scheduleBuilder;
 
-    @Autowired
-    @Qualifier("botSchedulerFactoryBean")
-    private SchedulerFactoryBean botSchedulerFactoryBean;
-
     public LivenessProbaBotJob() {
         super();
     }
 
     @PostConstruct
     private void init() {
-        super.init(LivenessProbaBotJob.class, scheduleBuilder, botSchedulerFactoryBean.getScheduler());
+        super.init(LivenessProbaBotJob.class, scheduleBuilder);
     }
 
     @Override
     public void executeInner(JobExecutionContext context) throws Exception {
         adminIds.forEach(adminId -> {
             try {
-                log.info("\nПинг adminID = {}", adminId);
+                log.info("Пинг adminID = {}", adminId);
                 chat.setId(adminId);
                 pingBotCommand.executeOne(user, chat, args);
             } catch (TelegramApiException ex) {
                 var errorMsg = String.format("Не получается пингануть adminID = %d", adminId);
                 throw new RuntimeException(errorMsg, ex);
             } finally {
-                log.info("Пинг завершен.");
+                log.info("Пинг завершен.\n");
             }
         });
     }
