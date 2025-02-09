@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.ro.botlib.utils.SDKUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -33,5 +34,15 @@ public class PingBotCommand extends CustomBotCommand {
         msg.setChatId(chat.getId());
         msg.setText("pong");
         SDKUtils.ABS_SENDER.execute(msg);
+    }
+
+    @Override
+    public String getTemplateArguments() {
+        return "";
+    }
+
+    @Override
+    public List<String> getUseCasesArguments() {
+        return Collections.emptyList();
     }
 }

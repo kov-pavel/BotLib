@@ -48,7 +48,7 @@ public class BotException extends RuntimeException {
     }
 
     public String getClientMessage() {
-        return hasClientMessage() ? getClientMessage() : "Неизвестная ошибка!";
+        return hasClientMessage() ? this.clientMessage : "Неизвестная ошибка!";
     }
 
     private boolean hasClientMessage() {

@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.ro.botlib.command.PingBotCommand;
+import ru.ro.botlib.exception.BotException;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,13 +45,13 @@ public class LivenessProbaBotJob extends CustomBotJob {
     @Override
     public void executeInner(JobExecutionContext context) throws Exception {
         adminIds.forEach(adminId -> {
+            var operationName = "Пинг adminID = " + adminId;
             try {
-                log.info("Пинг adminID = {}", adminId);
+                log.info(operationName);
                 chat.setId(adminId);
                 pingBotCommand.executeOne(user, chat, args);
             } catch (TelegramApiException ex) {
-                var errorMsg = String.format("Не получается пингануть adminID = %d", adminId);
-                throw new RuntimeException(errorMsg, ex);
+                BotException.describeLogAndChief(operationName, ex);
             } finally {
                 log.info("Пинг завершен.\n");
             }

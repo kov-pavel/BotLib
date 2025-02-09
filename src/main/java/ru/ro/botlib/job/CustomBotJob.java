@@ -42,7 +42,7 @@ public abstract class CustomBotJob implements Job {
             Class<? extends CustomBotJob> clazz,
             ScheduleBuilder<?> scheduleBuilder
     ) {
-        init(clazz, scheduleBuilder, TimeUtils.nowPlusSeconds(5));
+        init(clazz, scheduleBuilder, TimeUtils.nowPlusSeconds(3));
     }
 
     protected void init(
