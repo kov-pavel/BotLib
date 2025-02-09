@@ -94,6 +94,6 @@ public class ChiefNotifier {
     }
 
     public void notifyChief(String text) {
-        ChatUtils.sendMessage(chat.getChatId(), chat.getThreadId(), text, SDKUtils.ABS_SENDER);
+        ChatUtils.sendMessageAsync(chat.getChatId(), chat.getThreadId(), text, SDKUtils.ABS_SENDER);
     }
 }

@@ -10,7 +10,6 @@ import ru.ro.botlib.utils.ChatUtils;
 import ru.ro.botlib.utils.SDKUtils;
 import ru.ro.botlib.utils.log.LogUtils;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Getter
@@ -82,7 +81,7 @@ public class BotException extends RuntimeException {
         var describeResponse = describeLogAndChief(operationName, ex);
 
         String clientMsg = describeResponse.getClientMessage();
-        ChatUtils.sendMessage(chatId, clientMsg, absSender);
+        ChatUtils.sendMessageAsync(chatId, clientMsg, absSender);
     }
 
     @AllArgsConstructor
