@@ -73,4 +73,18 @@ public class LogUtils {
 
         log.info(logTextSb.toString());
     }
+
+    public static void logSimpleBlockSeparator(boolean isFirstLine, String operationName) {
+        var logTextSb = new StringBuilder();
+
+        if (isFirstLine) {
+            logTextSb
+                    .append("\n*").append(operationName).append("*, [START]");
+        } else {
+            logTextSb
+                    .append("*").append(operationName).append("*, [END]\n");
+        }
+
+        log.info(logTextSb.toString());
+    }
 }

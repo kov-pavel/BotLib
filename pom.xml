@@ -12,7 +12,7 @@
 
     <groupId>ru.ro</groupId>
     <artifactId>bot-lib</artifactId>
-    <version>0.1.33</version>
+    <version>0.1.36</version>
     <name>BotLib</name>
     <packaging>jar</packaging>
     <description>Библиотека шаблонов для разработки Telegram ботов</description>

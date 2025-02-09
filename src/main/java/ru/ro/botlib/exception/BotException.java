@@ -63,6 +63,7 @@ public class BotException extends RuntimeException {
         return DescribeResponse.builder()
                 .botException(botEx)
                 .logMessage(logMsg)
+                .clientMessage(botEx.getClientMessage())
                 .build();
     }
 
@@ -81,7 +82,7 @@ public class BotException extends RuntimeException {
         var describeResponse = describeLogAndChief(operationName, ex);
 
         String clientMsg = describeResponse.getClientMessage();
-        ChatUtils.sendMessageAsync(chatId, clientMsg, absSender);
+        ChatUtils.sendMessageSync(chatId, clientMsg, absSender);
     }
 
     @AllArgsConstructor
