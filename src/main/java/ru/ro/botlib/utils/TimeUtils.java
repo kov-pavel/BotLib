@@ -2,8 +2,11 @@ package ru.ro.botlib.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -22,15 +25,20 @@ public class TimeUtils {
     }
 
     public static Date atHours(int hours) {
+        return atTime(hours, 0);
+    }
+
+    public static Date atTime(int hours, int minutes) {
         // Получаем текущий момент времени
         var calendar = Calendar.getInstance();
         var now = calendar.getTime();
 
         // Устанавливаем указанный час и обнуляем минуты, секунды, миллисекунды
         calendar.set(Calendar.HOUR_OF_DAY, hours);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MINUTE, minutes);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC+3"));
 
         // Если полученное время уже прошло, добавляем 1 день
         if (calendar.getTime().before(now)) {
@@ -61,6 +69,14 @@ public class TimeUtils {
 
     public static Date unix2date(int unixTime) {
         return new Date(unixTime * 1000L);
+    }
+
+    public static Date text2date(String dateText) throws ParseException {
+        return text2date(dateText, "dd/MM/yy");
+    }
+
+    public static Date text2date(String dateText, String pattern) throws ParseException {
+        return new SimpleDateFormat(pattern).parse(dateText);
     }
 
     public static String formatOutputDate(Date date) {

@@ -24,7 +24,7 @@ public class BotException extends RuntimeException {
     }
 
     public BotException(String operationName, Throwable cause) {
-        this(operationName, cause.getMessage(), Optional.of(cause));
+        this(operationName, "", Optional.of(cause));
     }
 
     public BotException(String operationName, String clientMessage) {
@@ -33,12 +33,10 @@ public class BotException extends RuntimeException {
 
     public BotException(String operationName, String clientMessage, Optional<Throwable> exO) {
         var logMessageSb = new StringBuilder()
-                .append(ExceptionUtils.makeOperationMessage(operationName))
-                .append(". Подробнее: ")
-                .append(clientMessage);
+                .append(ExceptionUtils.makeOperationMessage(operationName));
 
         exO.ifPresent(e -> logMessageSb
-                .append("\n\nStackTrace:\n")
+                .append("\n\n")
                 .append(LogUtils.parseExceptionForLog(e))
         );
 
@@ -70,10 +68,7 @@ public class BotException extends RuntimeException {
     public static DescribeResponse describeLogAndChief(String operationName, Exception ex) {
         var describeResponse = describeLog(operationName, ex);
 
-        SDKUtils.CHIEF_NOTIFIER.notifyChief(
-                ex,
-                describeResponse.getLogMessage()
-        );
+        SDKUtils.CHIEF_NOTIFIER.notifyChief(describeResponse.getLogMessage());
 
         return describeResponse;
     }

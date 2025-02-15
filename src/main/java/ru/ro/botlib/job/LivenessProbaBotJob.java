@@ -50,7 +50,7 @@ public class LivenessProbaBotJob extends CustomBotJob {
                 log.info(operationName);
                 chat.setId(adminId);
                 pingBotCommand.executeOne(user, chat, args);
-            } catch (TelegramApiException ex) {
+            } catch (Exception ex) {
                 BotException.describeLogAndChief(operationName, ex);
             } finally {
                 log.info("Пинг завершен.\n");

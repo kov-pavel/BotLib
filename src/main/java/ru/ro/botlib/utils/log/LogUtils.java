@@ -2,6 +2,7 @@ package ru.ro.botlib.utils.log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import ru.ro.botlib.exception.BotException;
 import ru.ro.botlib.utils.SDKUtils;
 import ru.ro.botlib.utils.TimeUtils;
@@ -37,20 +38,9 @@ public class LogUtils {
             pw.println("\nStack Trace:");
             ex.printStackTrace(pw);
 
-            // Обрабатываем вложенные исключения
-            Throwable cause = ex.getCause();
-            int level = 1;
-            while (cause != null) {
-                pw.println("\nCaused by [" + level + "]: " + cause.getClass().getName());
-                pw.println("Cause Message: " + cause.getMessage());
-                cause.printStackTrace(pw);
-                cause = cause.getCause();
-                level++;
-            }
-
             return sw.toString();
         } catch (Exception ex2) {
-            return "Не удалось выполнить операцию: " + operationName;
+            return "Не удалось выполнить операцию: " + StringUtils.quote(operationName);
         }
     }
 
