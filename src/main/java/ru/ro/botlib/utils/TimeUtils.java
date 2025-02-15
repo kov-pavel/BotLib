@@ -22,13 +22,17 @@ public class TimeUtils {
     }
 
     public static Date atHours(int hours) {
+        return atTime(hours, 0);
+    }
+
+    public static Date atTime(int hours, int minutes) {
         // Получаем текущий момент времени
         var calendar = Calendar.getInstance();
         var now = calendar.getTime();
 
         // Устанавливаем указанный час и обнуляем минуты, секунды, миллисекунды
         calendar.set(Calendar.HOUR_OF_DAY, hours);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MINUTE, minutes);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
